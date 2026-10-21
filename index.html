@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مفاتيح قلعة نخل</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700&family=Reem+Kufi:wght@500;600;700&display=swap">
+<style>
+/* Layout: one-screen game column (max 480px). The fort scene fills the screen; the climb path, station sheets and the gate finale sit over it. */
+:root{
+  --bg:#e8f1f2; --card:#fffdf9; --line:#dccdb6; --ink:#2b2118; --muted:#6d5b48;
+  --accent:#1d6b57; --accent-ink:#ffffff; --accent-soft:#d5ebe3;
+  --gold:#d99a1e; --gold-soft:#fbecc8; --warn:#b8432b; --warn-soft:#f7ddd5;
+  --sky-top:#8fcbe0; --sky-bot:#f2dfb8; --sun:#ffd36b;
+  --mount1:#a7b8c3; --mount2:#7f96a5;
+  --rock:#9a7353; --rock-dark:#74553d; --rock-light:#b48b66;
+  --fort:#dcae6c; --fort-shade:#c08c4d; --fort-dark:#8e6233; --wood:#6a3c1f;
+  --palm:#2e7a4e; --palm-dark:#1d5937; --trunk:#7a5534; --oasis:#5f9a55;
+  --flag-red:#c8102e; --flag-green:#008751; --flag-white:#ffffff;
+  --path:#fff6e3; --scrim:rgba(20,28,34,.45);
+  --font-display:"Reem Kufi","Baloo Bhaijaan 2",Tahoma,"Segoe UI",sans-serif;
+  --font-body:"Baloo Bhaijaan 2",Tahoma,"Segoe UI","Noto Sans Arabic",sans-serif;
+  --r-lg:22px; --r-md:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121d27; --card:#1c2a37; --line:#344658; --ink:#f3e9d8; --muted:#c3b29b;
+    --accent:#3fb08f; --accent-ink:#06150f; --accent-soft:#1d3c35;
+    --gold:#f2bd4a; --gold-soft:#3d3218; --warn:#f08a70; --warn-soft:#43241e;
+    --sky-top:#0e2238; --sky-bot:#40395a; --sun:#f6e7b0;
+    --mount1:#2d3f55; --mount2:#22334a;
+    --rock:#5f4836; --rock-dark:#47352a; --rock-light:#755a43;
+    --fort:#b98c55; --fort-shade:#946a3b; --fort-dark:#6b4a28; --wood:#4c2b16;
+    --palm:#2a6845; --palm-dark:#1a4630; --trunk:#5b3f27; --oasis:#3c6e3e;
+    --path:#e9dcc0; --scrim:rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121d27; --card:#1c2a37; --line:#344658; --ink:#f3e9d8; --muted:#c3b29b;
+  --accent:#3fb08f; --accent-ink:#06150f; --accent-soft:#1d3c35;
+  --gold:#f2bd4a; --gold-soft:#3d3218; --warn:#f08a70; --warn-soft:#43241e;
+  --sky-top:#0e2238; --sky-bot:#40395a; --sun:#f6e7b0;
+  --mount1:#2d3f55; --mount2:#22334a;
+  --rock:#5f4836; --rock-dark:#47352a; --rock-light:#755a43;
+  --fort:#b98c55; --fort-shade:#946a3b; --fort-dark:#6b4a28; --wood:#4c2b16;
+  --palm:#2a6845; --palm-dark:#1a4630; --trunk:#5b3f27; --oasis:#3c6e3e;
+  --path:#e9dcc0; --scrim:rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+html{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:18px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  overflow:hidden;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+#app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;position:relative}
+
+/* top bar */
+.topbar{display:flex;align-items:center;gap:8px;padding-block:8px;min-height:60px}
+.keybar{flex:1;display:flex;gap:3px;justify-content:center;min-width:0}
+.keyslot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:2px dashed var(--line);background:var(--card);transition:transform .3s}
+.keyslot svg{width:18px;height:18px;opacity:.25}
+.keyslot svg path,.keyslot svg circle{fill:var(--muted)}
+.keyslot.got{border:2px solid var(--gold);background:var(--gold-soft)}
+.keyslot.got svg{opacity:1}
+.keyslot.got svg path,.keyslot.got svg circle{fill:var(--gold)}
+.keyslot.pop{animation:pop .6s ease}
+.iconbtn{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);display:grid;place-items:center}
+.iconbtn svg{width:22px;height:22px}
+.iconbtn svg *{stroke:var(--ink)}
+
+/* scene */
+.stage{flex:1;min-height:0;overflow-y:auto;position:relative;display:flex;justify-content:center;align-items:flex-start}
+.scene{position:relative;aspect-ratio:360/560;width:100%;max-width:100%;border-radius:var(--r-lg);overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+.scene svg.art{position:absolute;inset:0;width:100%;height:100%;display:block}
+.node{position:absolute;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;border:3px solid var(--card);
+  background:var(--muted);color:var(--card);font-family:var(--font-display);font-weight:700;font-size:20px;line-height:1;
+  display:grid;place-items:center;box-shadow:0 4px 10px rgba(0,0,0,.25);transition:transform .2s}
+.node[disabled]{cursor:default;opacity:.75}
+.node.now{background:var(--accent);color:var(--accent-ink);animation:pulse 1.6s ease-in-out infinite}
+.node.done{background:var(--gold);color:#3a2706}
+.node.done svg{width:22px;height:22px}
+.node.done svg path,.node.done svg circle{fill:#3a2706}
+.gatebtn{position:absolute;left:54.2%;top:40.6%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;border:3px solid var(--gold);background:transparent}
+.gatebtn.ready{background:radial-gradient(circle,rgba(255,214,107,.75),rgba(255,214,107,0) 70%);animation:pulse 1.4s infinite}
+.hint-bubble{position:absolute;inset-inline:12px;top:12px;text-align:center;font-weight:600;background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 14px;font-size:17px;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+
+/* intro card */
+.intro{position:absolute;inset-inline:10px;bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+.eyebrow{font-size:14px;color:var(--muted);letter-spacing:.02em}
+h1{font-family:var(--font-display);font-weight:700;font-size:38px;line-height:1.15;margin:0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent)}
+.intro p{margin:0;font-size:18px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{min-height:52px;border-radius:999px;border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:20px;padding:6px 22px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.wide{width:100%}
+.btn svg{width:20px;height:20px;flex:none}
+.linkrow{display:flex;gap:8px}
+.linkrow input{flex:1;min-width:0;min-height:50px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:15px;padding:4px 12px}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn[disabled]{opacity:.45;cursor:default}
+
+/* station sheet */
+.opt:disabled,.zone:disabled{opacity:1;color:inherit;cursor:default}
+.opt.bad:disabled{opacity:.7}
+button.brick{padding:0;border:0}
+.opts.two .opt.tile svg{max-width:64px}
+.stars{color:var(--gold);font-size:28px;letter-spacing:4px;line-height:1}
+.sheet{position:absolute;inset:var(--tb,64px) 0 0 0;z-index:20;background:var(--bg);display:flex;flex-direction:column;animation:rise .35s ease}
+.sheet-head{display:flex;align-items:center;gap:10px;padding-block:8px}
+.sheet-head .step{font-size:15px;color:var(--muted)}
+.sheet-body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-block:4px 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px}
+.fact{display:flex;flex-direction:column;gap:10px}
+.fact-top{display:flex;align-items:center;gap:12px}
+.fact-ill{flex:none;width:76px;height:76px;border-radius:50%;background:var(--gold-soft);display:grid;place-items:center}
+.fact-ill svg{width:52px;height:52px}
+h2{font-family:var(--font-display);font-weight:700;font-size:28px;line-height:1.2;margin:0;text-wrap:balance}
+.fact-text{font-size:21px;line-height:1.85;margin:0}
+.fact-text b{color:var(--accent)}
+.gloss{background:var(--accent-soft);border-radius:var(--r-md);padding:8px 12px;font-size:16px}
+.gloss b{font-weight:700}
+.src{font-size:14px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.src svg{width:16px;height:16px;flex:none}
+.src svg *{stroke:var(--muted)}
+.speak{align-self:flex-start;min-height:40px;border-radius:999px;border:1px solid var(--line);background:var(--bg);padding:2px 14px;display:inline-flex;align-items:center;gap:6px;font-size:16px}
+.speak svg{width:18px;height:18px}
+.speak svg *{stroke:var(--ink)}
+.q{font-family:var(--font-display);font-weight:600;font-size:23px;line-height:1.4;margin:0;text-wrap:balance}
+.qhelp{font-size:16px;color:var(--muted);margin:0}
+
+/* options */
+.opts{display:grid;gap:10px}
+.opts.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.opt{min-height:60px;border-radius:var(--r-md);border:2px solid var(--line);background:var(--card);padding:10px 14px;font-size:20px;font-weight:600;display:flex;align-items:center;gap:12px;text-align:start;transition:border-color .2s,background .2s}
+.opt.tile{flex-direction:column;justify-content:center;text-align:center;gap:6px;padding:10px 6px;font-size:17px;line-height:1.3}
+.opt.tile svg{width:100%;max-width:120px;height:auto;aspect-ratio:1;border-radius:12px}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--accent);background:var(--accent-soft)}
+.opt.bad{border-color:var(--warn);background:var(--warn-soft);animation:shake .4s}
+.opt .mark{margin-inline-start:auto;font-size:22px}
+.fb{border-radius:var(--r-md);padding:12px 14px;font-size:19px;font-weight:600;display:flex;gap:10px;align-items:flex-start}
+.fb.ok{background:var(--accent-soft)}
+.fb.bad{background:var(--warn-soft)}
+.fb svg{flex:none;width:28px;height:28px}
+
+/* repair wall */
+.wall{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;padding:10px;background:var(--rock-dark);border-radius:var(--r-md)}
+.brick{grid-column:span 2;height:34px;border-radius:5px;background:var(--fort);box-shadow:inset 0 -4px 0 var(--fort-shade)}
+.brick.half{grid-column:span 1}
+.brick.gap{background:transparent;border:2px dashed var(--path);box-shadow:none;animation:blink 1.2s infinite}
+.brick.fixed{background:var(--gold);box-shadow:inset 0 -4px 0 var(--fort-shade);animation:pop .4s}
+/* digits */
+.slots{display:flex;gap:8px;justify-content:center;align-items:center}
+.slots-wrap{display:flex;gap:10px;justify-content:center;align-items:center;font-family:var(--font-display);font-size:26px}
+.slot{width:54px;height:64px;border-radius:12px;border:2px dashed var(--line);display:grid;place-items:center;font-family:var(--font-display);font-size:36px;font-weight:700;background:var(--card)}
+.slot.filled{border-style:solid;border-color:var(--accent)}
+.pool{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.digit{width:60px;height:60px;border-radius:50%;border:2px solid var(--line);background:var(--gold-soft);font-family:var(--font-display);font-size:32px;font-weight:700}
+.digit[disabled]{opacity:.25}
+/* sorting */
+.sort-item{text-align:center;font-size:24px;font-weight:700;padding:18px;border:2px solid var(--gold);background:var(--gold-soft);border-radius:var(--r-lg)}
+.zones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.zone{border-radius:var(--r-md);border:2px solid var(--line);background:var(--card);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-height:120px}
+.zone b{font-family:var(--font-display);font-size:20px}
+.zone small{font-size:14px;color:var(--muted);line-height:1.35}
+.zone .chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.chip{font-size:13px;background:var(--accent-soft);border-radius:999px;padding:0 8px}
+.zone.bad{border-color:var(--warn);animation:shake .4s}
+
+/* finale */
+.finale{position:absolute;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column;overflow-y:auto;padding-block:10px 24px;gap:14px;animation:rise .4s ease}
+.gate{position:relative;height:250px;flex:none;border-radius:var(--r-lg);overflow:hidden;background:linear-gradient(var(--sky-top),var(--sky-bot));perspective:700px}
+.gate .arch{position:absolute;left:50%;bottom:0;width:170px;height:210px;margin-left:-85px;border-radius:85px 85px 0 0;background:radial-gradient(circle at 50% 70%,#fff6d6,var(--gold) 70%);overflow:hidden}
+.gate .wallface{position:absolute;inset:0;background:var(--fort);clip-path:polygon(0 18%,6% 18%,6% 12%,12% 12%,12% 18%,20% 18%,20% 12%,26% 12%,26% 18%,34% 18%,34% 12%,40% 12%,40% 18%,60% 18%,60% 12%,66% 12%,66% 18%,74% 18%,74% 12%,80% 12%,80% 18%,88% 18%,88% 12%,94% 12%,94% 18%,100% 18%,100% 100%,0 100%)}
+.gate .door{position:absolute;bottom:0;width:50%;height:100%;background:repeating-linear-gradient(90deg,var(--wood) 0 14px,var(--trunk) 14px 16px);transition:transform 1.8s cubic-bezier(.6,0,.2,1)}
+.gate .door::after{content:"";position:absolute;inset:0;background:radial-gradient(circle,var(--gold) 2px,transparent 3px) 0 0/20px 20px;opacity:.8}
+.gate .door.r{right:0;transform-origin:right center}
+.gate .door.l{left:0;transform-origin:left center}
+.gate.open .door.r{transform:rotateY(-100deg)}
+.gate.open .door.l{transform:rotateY(100deg)}
+.cert{border:3px double var(--gold);background:var(--card);border-radius:var(--r-lg);padding:20px 16px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}
+.cert .seal{width:64px;height:64px}
+.cert h2{font-size:30px}
+.cert .who{font-family:var(--font-display);font-size:30px;color:var(--accent);min-height:44px;border-bottom:2px dotted var(--line);padding-inline:16px}
+.cert .keys-done{display:flex;gap:4px;justify-content:center}
+.cert .keys-done svg{width:22px;height:22px}
+.cert .keys-done svg path,.cert .keys-done svg circle{fill:var(--gold)}
+.field{display:flex;flex-direction:column;gap:4px;text-align:start}
+.field label{font-size:16px;color:var(--muted)}
+.field input{min-height:50px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:20px;padding:4px 14px}
+
+/* about modal */
+.modal{position:absolute;inset:0;z-index:40;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;padding-block:12px}
+.modal .card{width:100%;max-height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:10px;animation:rise .3s ease}
+.modal h3{font-family:var(--font-display);font-size:22px;margin:0}
+.modal dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:17px}
+.modal dt{color:var(--muted)}
+.modal dd{margin:0;font-weight:600}
+.blank{display:inline-block;min-width:120px;border-bottom:2px dotted var(--muted)}
+.facts-list{list-style-type:arabic-indic;margin:0;padding-inline-start:20px;font-size:16px;display:flex;flex-direction:column;gap:2px}
+
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+@keyframes rise{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes blink{50%{opacity:.35}}
+@keyframes flyin{from{transform:translateY(40px) scale(.4);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media (max-height:640px){h1{font-size:32px}.intro{gap:6px;padding:12px 14px}}
+</style>
+</head>
+<body>
+
+<div id="app" dir="rtl" lang="ar">
+  <header class="topbar">
+    <button class="iconbtn" id="btnAbout" type="button" aria-label="عن اللعبة ومصدر المعلومات">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.6v.4"/></svg>
+    </button>
+    <div class="keybar" id="keybar" role="img" aria-label="المفاتيح التي جمعتِها"></div>
+    <button class="iconbtn" id="btnSound" type="button" aria-label="إيقاف الصوت" aria-pressed="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h4l5-4v13l-5-4H4z"/><path id="waves" d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/><path id="mute" d="M16.5 9.5l5 5M21.5 9.5l-5 5" hidden/></svg>
+    </button>
+  </header>
+
+  <main class="stage" id="stage">
+    <div class="scene" id="scene">
+      <svg class="art" viewBox="0 0 360 560" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" style="stop-color:var(--sky-top)"/>
+            <stop offset="1" style="stop-color:var(--sky-bot)"/>
+          </linearGradient>
+          <symbol id="palm" viewBox="0 0 60 90">
+            <path d="M30,90 C33,72 27,52 31,32" style="fill:none;stroke:var(--trunk);stroke-width:5;stroke-linecap:round"/>
+            <path d="M31,32 C22,20 9,20 1,30 C11,26 21,28 31,34 Z" style="fill:var(--palm)"/>
+            <path d="M31,32 C40,20 53,20 59,30 C49,26 40,28 31,34 Z" style="fill:var(--palm)"/>
+            <path d="M31,32 C26,18 18,10 8,10 C17,15 24,22 30,33 Z" style="fill:var(--palm)"/>
+            <path d="M31,32 C36,18 44,10 54,10 C45,15 38,22 32,33 Z" style="fill:var(--palm)"/>
+            <path d="M31,32 C28,40 18,48 10,52 C19,44 25,38 30,31 Z" style="fill:var(--palm-dark)"/>
+            <path d="M31,32 C34,40 44,48 52,52 C43,44 37,38 32,31 Z" style="fill:var(--palm-dark)"/>
+            <path d="M31,32 C30,22 31,12 33,4 C34,13 33,23 32,33 Z" style="fill:var(--palm)"/>
+            <circle cx="28.5" cy="36.5" r="2.4" style="fill:var(--gold)"/>
+            <circle cx="33" cy="37.5" r="2.4" style="fill:var(--gold)"/>
+          </symbol>
+        </defs>
+        <rect width="360" height="560" style="fill:url(#gSky)"/>
+        <circle cx="292" cy="78" r="28" style="fill:var(--sun);opacity:.9"/>
+        <!-- سلسلة الجبال خلف القلعة -->
+        <path d="M0,250 L40,190 L75,215 L120,140 L160,190 L205,120 L250,175 L290,135 L330,180 L360,160 V380 H0 Z" style="fill:var(--mount1)"/>
+        <path d="M0,300 L45,245 L95,280 L150,230 L200,270 L255,232 L310,268 L360,240 V400 H0 Z" style="fill:var(--mount2)"/>
+        <!-- الربوة الصخرية -->
+        <path d="M30,560 L52,480 L80,430 L104,350 L132,262 L160,226 L232,226 L258,262 L284,340 L312,425 L334,488 L352,560 Z" style="fill:var(--rock)"/>
+        <path d="M132,262 L160,226 L180,240 L150,300 L104,350 Z" style="fill:var(--rock-light)"/>
+        <path d="M232,226 L258,262 L284,340 L250,300 L238,250 Z" style="fill:var(--rock-dark)"/>
+        <path d="M80,430 L104,350 L140,380 L110,450 Z" style="fill:var(--rock-light)"/>
+        <path d="M284,340 L312,425 L334,488 L290,450 L270,380 Z" style="fill:var(--rock-dark)"/>
+        <path d="M150,470 L190,420 L230,470 L200,500 Z" style="fill:var(--rock-dark);opacity:.5"/>
+        <!-- القلعة -->
+        <g id="fort">
+          <rect x="148" y="190" width="100" height="46" style="fill:var(--fort)"/>
+          <rect x="176" y="148" width="40" height="60" style="fill:var(--fort-shade)"/>
+          <rect x="134" y="172" width="30" height="64" rx="5" style="fill:var(--fort-shade)"/>
+          <rect x="234" y="164" width="30" height="72" rx="5" style="fill:var(--fort)"/>
+          <rect x="252" y="164" width="12" height="72" style="fill:var(--fort-shade);opacity:.6"/>
+          <g style="fill:var(--fort-dark)">
+            <rect x="186" y="164" width="4" height="9" rx="2"/><rect x="202" y="164" width="4" height="9" rx="2"/>
+            <rect x="146" y="192" width="3" height="8" rx="1.5"/><rect x="246" y="184" width="3" height="8" rx="1.5"/>
+            <rect x="162" y="206" width="3" height="7" rx="1.5"/><rect x="230" y="206" width="3" height="7" rx="1.5"/>
+          </g>
+          <path d="M186,236 V221 Q196,206 206,221 V236 Z" style="fill:var(--wood)"/>
+          <path d="M183,236 V220 Q196,201 209,220 V236" style="fill:none;stroke:var(--fort-dark);stroke-width:2"/>
+          <line x1="196" y1="108" x2="196" y2="142" style="stroke:var(--fort-dark);stroke-width:2"/>
+          <rect x="196" y="108" width="7" height="15" style="fill:var(--flag-red)"/>
+          <rect x="203" y="108" width="17" height="5" style="fill:var(--flag-white)"/>
+          <rect x="203" y="113" width="17" height="5" style="fill:var(--flag-red)"/>
+          <rect x="203" y="118" width="17" height="5" style="fill:var(--flag-green)"/>
+          <path d="M197.6,110.6 h3.6 M199.4,109.4 v3" style="stroke:var(--flag-white);stroke-width:.8"/>
+          <g id="merlons"></g>
+        </g>
+        <!-- طريق الصعود -->
+        <path d="M182,552 C160,535 118,500 120,470 C122,445 210,452 215,430 C220,405 132,408 130,385 C128,360 228,362 230,340 C232,318 152,322 150,300 C148,280 222,285 225,262 C227,248 200,244 196,236" style="fill:none;stroke:var(--path);stroke-width:5;stroke-linecap:round;stroke-dasharray:2 10"/>
+        <!-- واحة النخيل عند السفح -->
+        <rect x="0" y="532" width="360" height="28" style="fill:var(--oasis)"/>
+        <use href="#palm" x="-6" y="440" width="60" height="90"/>
+        <use href="#palm" x="30" y="466" width="52" height="78"/>
+        <use href="#palm" x="88" y="492" width="42" height="62"/>
+        <use href="#palm" x="236" y="488" width="44" height="66"/>
+        <use href="#palm" x="280" y="438" width="60" height="90"/>
+        <use href="#palm" x="312" y="470" width="50" height="74"/>
+      </svg>
+      <div id="nodes"></div>
+      <button class="gatebtn" id="gateBtn" type="button" aria-label="افتحي باب القلعة" hidden></button>
+      <div class="hint-bubble" id="hint" hidden></div>
+
+      <section class="intro" id="intro">
+        <div class="eyebrow">لعبة رقمية · مسابقة وهج عُمان الرقمي</div>
+        <h1>مفاتيح <em>قلعة نخل</em></h1>
+        <p>اصعدي الربوة الصخرية، وأجيبي في ٧ محطات لتجمعي ٧ مفاتيح، ثم افتحي باب القلعة.</p>
+        <button class="btn wide" id="btnStart" type="button">ابدئي الرحلة</button>
+        <div class="row">
+          <button class="btn ghost" id="btnShare" type="button" style="flex:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>مشاركة</button>
+          <button class="btn ghost" id="btnAbout2" type="button" style="flex:1">المصدر</button>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="layer"></div>
+</div>
+
+<script>
+document.documentElement.lang = "ar"; document.documentElement.dir = "rtl";
+/* ===== بيانات المشاركة والمصدر (تُعبّأ من ولي الأمر) ===== */
+const STUDENT = { name: "", grade: "", section: "" };
+const SOURCE = { book: "الموسوعة العمانية للناشئة", part: "", page: "٣٦" };
+
+const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const srcLine = () => `المصدر: ${SOURCE.book}${SOURCE.part ? "، الجزء " + SOURCE.part : ""}، صفحة ${SOURCE.page}`;
+
+/* ===== أيقونات ===== */
+const KEY = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M7 7a5 5 0 1 0 0 10A5 5 0 1 0 7 7zm0 3a2 2 0 1 1 0 4a2 2 0 1 1 0-4z"/><path d="M11.6 10.5H22v3h-2v3h-3v-3h-5.4z"/></svg>`;
+const BOOK = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5C7 4 10 4.5 12 6c2-1.5 5-2 8-.5v13c-3-1.5-6-1-8 .5-2-1.5-5-2-8-.5z"/><path d="M12 6v13"/></svg>`;
+const SPK = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h4l5-4v13l-5-4H4z"/><path d="M16.5 9a4 4 0 0 1 0 6"/></svg>`;
+const BACK = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`;
+const OKI = `<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" style="fill:var(--accent)"/><path d="M9 16.5l5 5 9-10" style="fill:none;stroke:var(--accent-ink);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round"/></svg>`;
+const TRY = `<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" style="fill:var(--warn)"/><path d="M16 8.5v9M16 22.5v.5" style="fill:none;stroke:var(--card);stroke-width:3.4;stroke-linecap:round"/></svg>`;
+
+const IC = {
+  pin: `<svg viewBox="0 0 64 64"><path d="M32 6c-10 0-18 8-18 18 0 13 18 34 18 34s18-21 18-34C50 14 42 6 32 6z" style="fill:var(--warn)"/><circle cx="32" cy="24" r="7" style="fill:var(--card)"/></svg>`,
+  hill: `<svg viewBox="0 0 64 64"><path d="M4 58 L18 36 L27 28 L39 28 L48 38 L60 58 Z" style="fill:var(--rock)"/><rect x="24" y="18" width="16" height="11" style="fill:var(--fort)"/><rect x="21" y="13" width="6" height="16" rx="1" style="fill:var(--fort-shade)"/><rect x="37" y="13" width="6" height="16" rx="1" style="fill:var(--fort-shade)"/></svg>`,
+  glass: `<svg viewBox="0 0 64 64"><path d="M18 6h28v4h-3c0 10-8 14-8 22s8 12 8 22h3v4H18v-4h3c0-10 8-14 8-22s-8-12-8-22h-3z" style="fill:var(--fort-dark)"/><path d="M25 12h14c-1 6-5 9-7 12-2-3-6-6-7-12z" style="fill:var(--gold)"/><path d="M24 52c1-6 6-9 8-11 2 2 7 5 8 11z" style="fill:var(--gold)"/></svg>`,
+  wall: `<svg viewBox="0 0 64 64"><g style="fill:var(--fort)"><rect x="5" y="10" width="26" height="11" rx="2"/><rect x="34" y="10" width="25" height="11" rx="2"/><rect x="5" y="24" width="11" height="11" rx="2"/><rect x="47" y="24" width="12" height="11" rx="2"/><rect x="5" y="38" width="26" height="11" rx="2"/><rect x="34" y="38" width="25" height="11" rx="2"/></g><rect x="19" y="24" width="25" height="11" rx="2" style="fill:var(--gold)"/><path d="M40 52l12 8M44 50l10-2-2 10z" style="fill:var(--muted);stroke:var(--muted);stroke-width:3;stroke-linejoin:round"/></svg>`,
+  area: `<svg viewBox="0 0 64 64"><rect x="10" y="8" width="40" height="40" rx="3" style="fill:var(--accent-soft);stroke:var(--accent);stroke-width:3"/><path d="M10 56h40M10 53v6M50 53v6M57 8v40M54 8h6M54 48h6" style="fill:none;stroke:var(--accent);stroke-width:2.5"/><text x="30" y="34" text-anchor="middle" font-size="15" font-weight="700" style="fill:var(--accent)">م²</text></svg>`,
+  split: `<svg viewBox="0 0 64 64"><rect x="3" y="28" width="27" height="30" rx="2" style="fill:var(--fort)"/><rect x="34" y="14" width="27" height="44" rx="2" style="fill:var(--fort-shade)"/><path d="M32 6v56" style="stroke:var(--ink);stroke-width:2;stroke-dasharray:3 3"/><text x="16.5" y="49" text-anchor="middle" font-size="16" font-weight="700" style="fill:var(--ink)">١</text><text x="47.5" y="43" text-anchor="middle" font-size="16" font-weight="700" style="fill:var(--card)">٢</text></svg>`,
+  souq: `<svg viewBox="0 0 64 64"><rect x="8" y="30" width="48" height="26" style="fill:var(--fort)"/><path d="M4 30 L10 14 H54 L60 30 Z" style="fill:var(--warn)"/><path d="M19 14 L15 30 M32 14 V30 M45 14 L49 30" style="stroke:var(--gold-soft);stroke-width:3"/><circle cx="20" cy="46" r="6" style="fill:var(--rock)"/><circle cx="33" cy="46" r="6" style="fill:var(--gold)"/><circle cx="45" cy="47" r="5" style="fill:var(--rock-dark)"/></svg>`,
+  mosque: `<svg viewBox="0 0 64 64"><rect x="10" y="34" width="34" height="22" style="fill:var(--fort)"/><path d="M12 34 a15 13 0 0 1 30 0 z" style="fill:var(--accent)"/><rect x="47" y="14" width="9" height="42" style="fill:var(--fort-shade)"/><path d="M46 14 L51.5 5 L57 14 Z" style="fill:var(--accent)"/><path d="M22 56 v-10 a5 5 0 0 1 10 0 v10z" style="fill:var(--wood)"/></svg>`,
+  plane: `<svg viewBox="0 0 64 64"><path d="M32 6c2 0 4 2 4 5v14l20 12v5l-20-6v12l6 5v4l-10-3-10 3v-4l6-5V36L8 42v-5l20-12V11c0-3 2-5 4-5z" style="fill:var(--mount2)"/></svg>`,
+  ship: `<svg viewBox="0 0 64 64"><path d="M8 40h48l-8 13H16z" style="fill:var(--wood)"/><path d="M31 8v32" style="stroke:var(--wood);stroke-width:3"/><path d="M33 10 L52 37 H33z" style="fill:var(--flag-white);stroke:var(--muted);stroke-width:1.5"/><path d="M4 58c6-4 10 4 16 0s10 4 16 0 10 4 16 0 6 2 8 0" style="fill:none;stroke:var(--accent);stroke-width:3"/></svg>`
+};
+
+/* مشاهد اختيار المكان (المحطة ٢) */
+const miniFort = (x, y) => `<rect x="${x}" y="${y}" width="24" height="13" style="fill:var(--fort)"/><rect x="${x - 4}" y="${y - 6}" width="7" height="19" style="fill:var(--fort-shade)"/><rect x="${x + 21}" y="${y - 6}" width="7" height="19" style="fill:var(--fort-shade)"/><path d="M${x + 9} ${y + 13}v-6a3 3 0 0 1 6 0v6z" style="fill:var(--wood)"/>`;
+const SCENE = {
+  beach: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" style="fill:var(--sky-top)"/><circle cx="80" cy="20" r="9" style="fill:var(--sun)"/><rect y="58" width="100" height="18" style="fill:var(--accent);opacity:.75"/><path d="M0 62c8-3 12 3 20 0s12 3 20 0 12 3 20 0 12 3 20 0 12 3 20 0" style="fill:none;stroke:var(--flag-white);stroke-width:2;opacity:.8"/><path d="M0 74 Q50 66 100 74 V100 H0 Z" style="fill:var(--sky-bot)"/>${miniFort(38, 64)}</svg>`,
+  hill: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" style="fill:var(--sky-top)"/><path d="M0 60 L22 34 L40 50 L62 26 L84 46 L100 36 V100 H0 Z" style="fill:var(--mount2)"/><path d="M8 100 L26 66 L38 48 L62 48 L76 70 L92 100 Z" style="fill:var(--rock)"/><path d="M26 66 L38 48 L46 56 L34 80 Z" style="fill:var(--rock-light)"/>${miniFort(38, 35)}</svg>`,
+  dunes: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" style="fill:var(--sky-top)"/><circle cx="22" cy="20" r="9" style="fill:var(--sun)"/><path d="M0 70 Q25 52 50 66 T100 60 V100 H0 Z" style="fill:var(--fort-shade)"/><path d="M0 86 Q30 68 60 82 T100 80 V100 H0 Z" style="fill:var(--fort)"/>${miniFort(38, 57)}</svg>`
+};
+
+/* ===== المحطات السبع — كل معلومة من الموسوعة العمانية للناشئة، ص ٣٦ ===== */
+const STATIONS = [
+  { title: "أين تقع القلعة؟", icon: "pin",
+    fact: "تقع <b>قلعة نخل</b> في <b>ولاية نخل</b>، في <b>محافظة جنوب الباطنة</b> بسلطنة عُمان.",
+    ch: { type: "choice", q: "في أي محافظة تقع قلعة نخل؟",
+      options: [{ t: "محافظة ظفار" }, { t: "محافظة جنوب الباطنة", ok: 1 }, { t: "محافظة مسندم" }],
+      hint: "تذكّري: في اسم المحافظة كلمة «الباطنة»." } },
+  { title: "على ماذا بُنيت القلعة؟", icon: "hill",
+    fact: "بُنيت القلعة فوق <b>ربوة صخرية</b>، عند قاعدة <b>جبل نخل</b>، شمال شرق <b>الجبل الأخضر</b>.",
+    gloss: "<b>الربوة:</b> مكان مرتفع من الأرض، مثل التلّة.",
+    ch: { type: "scene", q: "اختاري الصورة الصحيحة: أين بُنيت قلعة نخل؟",
+      options: [{ t: "على شاطئ البحر", s: "beach" }, { t: "فوق ربوة صخرية", s: "hill", ok: 1 }, { t: "وسط الرمال", s: "dunes" }],
+      hint: "ابحثي عن الصخور والجبل." } },
+  { title: "كم عمر القلعة؟", icon: "glass",
+    fact: "تذكر بعض المصادر التاريخية أن بناء القلعة يعود إلى <b>ما قبل الإسلام</b>، فهي قلعة قديمة جدًّا.",
+    ch: { type: "choice", q: "تذكر بعض المصادر أن بناء القلعة يعود إلى…",
+      options: [{ t: "العام الماضي" }, { t: "قبل عشر سنوات" }, { t: "ما قبل الإسلام", ok: 1 }],
+      hint: "القلعة قديمة جدًّا جدًّا!" } },
+  { title: "ترميم القلعة", icon: "wall",
+    fact: "رُمِّمت القلعة <b>مرات عديدة</b>، وكان آخر ترميم لها من قِبل <b>وزارة التراث القومي والثقافة</b> عام <b>١٤١١هـ / ١٩٩٠م</b>.",
+    gloss: "<b>الترميم:</b> إصلاح المبنى القديم ليبقى قويًّا.",
+    ch: { type: "repair", q: "ساعدي في ترميم السور: اضغطي على كل فراغ لتضعي حجرًا.",
+      then: { q: "في أي عام كان آخر ترميم للقلعة؟",
+        options: [{ t: "١٩٥٠م" }, { t: "١٩٩٠م", ok: 1 }, { t: "٢٠٢٠م" }],
+        hint: "العام يبدأ بـ ١٩ وينتهي بـ ٩٠." } } },
+  { title: "مساحة القلعة", icon: "area",
+    fact: "تبلغ مساحة القلعة الإجمالية <b>٣٤٠٠ متر مربع</b>.",
+    ch: { type: "digits", q: "رتّبي الأرقام لتكتبي مساحة القلعة بالمتر المربع.",
+      target: ["٣", "٤", "٠", "٠"], pool: ["٠", "٣", "٠", "٤"],
+      hint: "العدد يبدأ بالرقم ٣ ثم ٤." } },
+  { title: "قلعة واحدة ونطاقان", icon: "split",
+    fact: "تنقسم القلعة إلى <b>نطاقين منفصلين</b>. <b>النطاق الأول</b> فيه المدخل الرئيس والسور والأبراج والبرزة الصيفية، ويعود إلى عهد <b>السيد سعيد بن سلطان البوسعيدي</b>. أما <b>النطاق الثاني</b> فهو البناء الرئيس للقلعة، ويعود إلى <b>عهد اليعاربة</b>.",
+    gloss: "<b>النطاق:</b> جزء من المكان. <b>البرزة:</b> مجلس يجلس فيه الناس ويستقبلون الضيوف.",
+    ch: { type: "sort", q: "ضعي كل جزء من القلعة في نطاقه الصحيح.",
+      items: [{ t: "المدخل الرئيس", z: 1 }, { t: "البناء الرئيس", z: 2 }, { t: "السور", z: 1 }, { t: "الأبراج", z: 1 }, { t: "البرزة الصيفية", z: 1 }],
+      zones: { 1: ["النطاق الأول", "عهد السيد سعيد بن سلطان البوسعيدي"], 2: ["النطاق الثاني", "عهد اليعاربة"] },
+      hint: "النطاق الثاني فيه شيء واحد فقط: البناء الرئيس." } },
+  { title: "جيران القلعة", icon: "souq",
+    fact: "يوجد إلى جانب القلعة <b>سوق نخل القديم</b> و<b>مسجد أثري</b>.",
+    ch: { type: "multi", need: 2, q: "ماذا يوجد بجانب القلعة؟ اختاري شيئين.",
+      options: [{ t: "سوق نخل القديم", i: "souq", ok: 1 }, { t: "مطار", i: "plane" }, { t: "مسجد أثري", i: "mosque", ok: 1 }, { t: "ميناء للسفن", i: "ship" }],
+      hint: "واحد للبيع والشراء، وواحد للصلاة." } }
+];
+const NODES = [[178, 515], [120, 470], [215, 430], [130, 385], [230, 340], [150, 300], [225, 262]];
+
+/* ===== الصوت ===== */
+let actx = null, soundOn = true;
+function tone(f, dur, type = "sine", when = 0, vol = .14, f2) {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === "suspended") actx.resume();
+    const t = actx.currentTime + when, o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + .05);
+  } catch (e) {}
+}
+const sfx = {
+  tap: () => tone(560, .07, "sine", 0, .08),
+  ok: () => { tone(660, .16, "triangle"); tone(880, .26, "triangle", .12); },
+  bad: () => tone(240, .28, "sine", 0, .1, 170),
+  key: () => [784, 988, 1175, 1568].forEach((f, i) => tone(f, .22, "triangle", i * .08, .11)),
+  door: () => { tone(110, 1.6, "sawtooth", 0, .05, 55); [523, 659, 784, 1047].forEach((f, i) => tone(f, .5, "triangle", 1.5 + i * .14, .12)); }
+};
+
+/* ===== القراءة بصوت عالٍ (إن توفّر صوت عربي في الجهاز) ===== */
+const canSpeak = () => { try { return "speechSynthesis" in window && speechSynthesis.getVoices().some(v => /^ar/i.test(v.lang)); } catch (e) { return false; } };
+function speak(html) {
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(html.replace(/<[^>]+>/g, ""));
+    const v = speechSynthesis.getVoices().find(v => /^ar/i.test(v.lang));
+    u.lang = v ? v.lang : "ar"; if (v) u.voice = v; u.rate = .9;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+</script>
+
+<script>
+const SELF_HTML = "<!doctype html>\n" + document.documentElement.outerHTML;
+const $ = (s, r = document) => r.querySelector(s);
+const el = html => { const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const S = { i: 0, mistakes: 0, started: false, name: "" };
+const layer = $("#layer"), stage = $("#stage"), scene = $("#scene");
+
+function fitScene() {
+  $("#app").style.setProperty("--tb", $(".topbar").offsetHeight + "px");
+  const w = stage.clientWidth, h = stage.clientHeight;
+  if (w && h) scene.style.width = Math.min(w, Math.max(h * 360 / 560, Math.min(w, 320))) + "px";
+}
+function addMerlons() {
+  const d = { "var(--fort)": "", "var(--fort-shade)": "" };
+  [[148, 248, 190, "var(--fort)"], [176, 216, 148, "var(--fort-shade)"], [134, 164, 172, "var(--fort-shade)"], [234, 264, 164, "var(--fort)"]]
+    .forEach(([x1, x2, y, f]) => { for (let x = x1; x <= x2 - 4; x += 7) d[f] += `M${x},${y}V${y - 4}l2,-3l2,3V${y}Z`; });
+  $("#merlons").innerHTML = Object.entries(d).map(([f, p]) => `<path d="${p}" style="fill:${f}"/>`).join("");
+}
+
+/* ===== الخريطة والمفاتيح ===== */
+function renderKeys(pop) {
+  const kb = $("#keybar"); kb.innerHTML = "";
+  for (let k = 0; k < 7; k++) kb.append(el(`<span class="keyslot${k < S.i ? " got" : ""}${k === pop ? " pop" : ""}">${KEY}</span>`));
+  kb.setAttribute("aria-label", `المفاتيح: ${AR(S.i)} من ٧`);
+}
+function renderNodes() {
+  const box = $("#nodes"); box.innerHTML = "";
+  const gate = $("#gateBtn"), hint = $("#hint");
+  if (!S.started) { gate.hidden = true; hint.hidden = true; return; }
+  NODES.forEach(([x, y], k) => {
+    const done = k < S.i, now = k === S.i;
+    const b = el(`<button type="button" class="node${done ? " done" : now ? " now" : ""}" style="left:${(x / 3.6).toFixed(2)}%;top:${(y / 5.6).toFixed(2)}%" aria-label="المحطة ${AR(k + 1)}: ${STATIONS[k].title}${done ? "، تمّت" : ""}">${done ? KEY : AR(k + 1)}</button>`);
+    if (!done && !now) b.disabled = true;
+    b.addEventListener("click", () => { sfx.tap(); openStation(k); });
+    box.append(b);
+  });
+  gate.hidden = S.i < 7; gate.classList.toggle("ready", S.i >= 7);
+  hint.hidden = false;
+  hint.textContent = S.i === 0 ? "اضغطي على المحطة ١ لتبدئي الصعود"
+    : S.i < 7 ? `أحسنتِ! المحطة التالية رقم ${AR(S.i + 1)}`
+    : "معكِ ٧ مفاتيح! اضغطي على باب القلعة";
+}
+const renderAll = () => { renderKeys(); renderNodes(); };
+
+/* ===== المحطة ===== */
+function openStation(k) {
+  const st = STATIONS[k];
+  const sh = el(`<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="stT">
+    <div class="sheet-head"><button type="button" class="iconbtn" data-act="close" aria-label="رجوع إلى الطريق">${BACK}</button><span class="step">المحطة ${AR(k + 1)} من ٧</span></div>
+    <div class="sheet-body">
+      <article class="card fact">
+        <div class="fact-top"><div class="fact-ill" aria-hidden="true">${IC[st.icon]}</div><h2 id="stT">${st.title}</h2></div>
+        <p class="fact-text">${st.fact}</p>
+        ${st.gloss ? `<div class="gloss">${st.gloss}</div>` : ""}
+        <button type="button" class="speak" data-act="speak"${canSpeak() ? "" : " hidden"}>${SPK}استمعي</button>
+        <div class="src">${BOOK}<span>${srcLine()}</span></div>
+      </article>
+      <button type="button" class="btn wide" data-act="go">أنا جاهزة للسؤال</button>
+      <section class="card fact chal" hidden></section>
+    </div></div>`);
+  sh.dataset.k = k;
+  layer.append(sh);
+  $("[data-act=close]", sh).focus();
+}
+function feedback(c, ok, text) {
+  let f = $(".fb", c);
+  if (!f) f = el(`<div class="fb" role="status" aria-live="polite"></div>`);
+  f.className = "fb " + (ok ? "ok" : "bad");
+  f.innerHTML = `${ok ? OKI : TRY}<span>${text}</span>`;
+  c.append(f);
+}
+function miss(c, hint) { S.mistakes++; sfx.bad(); feedback(c, false, `حاولي مرة أخرى. ${hint}`); }
+function win(k, c) {
+  const first = k === S.i;
+  if (first) S.i++;
+  sfx.ok(); setTimeout(sfx.key, 260);
+  feedback(c, true, first ? `أحسنتِ! حصلتِ على المفتاح رقم ${AR(k + 1)}.` : "أحسنتِ! إجابة صحيحة.");
+  const nb = el(`<button type="button" class="btn wide" data-act="next">${S.i >= 7 ? "اذهبي إلى باب القلعة" : "عودي إلى الطريق"}</button>`);
+  c.append(nb);
+  nb.focus({ preventScroll: true });
+  nb.scrollIntoView({ behavior: "smooth", block: "end" });
+  renderKeys(first ? k : undefined);
+}
+function runChallenge(k, c) {
+  const ch = STATIONS[k].ch;
+  c.innerHTML = `<p class="q">${ch.q}</p>`;
+  ({ choice: chChoice, scene: chChoice, repair: chRepair, digits: chDigits, sort: chSort, multi: chMulti })[ch.type](k, c, ch);
+}
+function chChoice(k, c, ch) {
+  const box = el(`<div class="opts${ch.type === "scene" ? " three" : ""}"></div>`);
+  ch.options.forEach(o => {
+    const b = el(`<button type="button" class="opt${o.s ? " tile" : ""}">${o.s ? SCENE[o.s] : ""}<span>${o.t}</span></button>`);
+    b.addEventListener("click", () => {
+      if (o.ok) { b.classList.add("ok"); box.querySelectorAll(".opt").forEach(x => x.disabled = true); win(k, c); }
+      else { b.classList.add("bad"); b.disabled = true; miss(c, ch.hint); }
+    });
+    box.append(b);
+  });
+  c.append(box);
+}
+function chRepair(k, c, ch) {
+  const wall = el(`<div class="wall" role="group" aria-label="سور القلعة"></div>`);
+  const gaps = new Set([2, 8, 14, 17, 23]);
+  let left = gaps.size, n = 0;
+  for (let r = 0; r < 4; r++) {
+    (r % 2 ? ["h", 2, 2, 2, 2, 2, "h"] : [2, 2, 2, 2, 2, 2]).forEach(w => {
+      const idx = n++;
+      if (gaps.has(idx)) {
+        const b = el(`<button type="button" class="brick gap" aria-label="ضعي حجرًا هنا"></button>`);
+        b.addEventListener("click", () => {
+          b.className = "brick fixed"; b.disabled = true; b.setAttribute("aria-label", "حجر جديد"); sfx.tap();
+          if (--left === 0) {
+            sfx.ok(); feedback(c, true, "رائع! أصبح السور قويًّا من جديد.");
+            c.append(el(`<p class="q">${ch.then.q}</p>`));
+            chChoice(k, c, ch.then);
+          }
+        });
+        wall.append(b);
+      } else wall.append(el(`<span class="brick${w === "h" ? " half" : ""}"></span>`));
+    });
+  }
+  c.append(wall);
+}
+function chDigits(k, c, ch) {
+  let pos = 0;
+  const wrap = el(`<div class="slots-wrap"><div class="slots" dir="ltr"></div><span>م²</span></div>`);
+  const slots = $(".slots", wrap);
+  ch.target.forEach(() => slots.append(el(`<span class="slot"></span>`)));
+  const pool = el(`<div class="pool" dir="ltr"></div>`);
+  ch.pool.forEach(d => {
+    const b = el(`<button type="button" class="digit" aria-label="الرقم ${d}">${d}</button>`);
+    b.addEventListener("click", () => {
+      if (d === ch.target[pos]) {
+        const s = slots.children[pos]; s.textContent = d; s.classList.add("filled");
+        b.disabled = true; pos++; sfx.tap();
+        if (pos === ch.target.length) win(k, c);
+      } else {
+        b.style.animation = "none"; void b.offsetWidth; b.style.animation = "shake .4s";
+        miss(c, ch.hint);
+      }
+    });
+    pool.append(b);
+  });
+  c.append(wrap, pool);
+}
+function chSort(k, c, ch) {
+  let n = 0;
+  const item = el(`<div class="sort-item" aria-live="polite">${ch.items[0].t}</div>`);
+  const zones = el(`<div class="zones"></div>`);
+  [1, 2].forEach(z => {
+    const [name, era] = ch.zones[z];
+    const b = el(`<button type="button" class="zone"><b>${name}</b><small>${era}</small><span class="chips"></span></button>`);
+    b.addEventListener("click", () => {
+      if (n >= ch.items.length) return;
+      if (ch.items[n].z === z) {
+        $(".chips", b).append(el(`<span class="chip">${ch.items[n].t}</span>`)); sfx.tap(); n++;
+        if (n === ch.items.length) {
+          item.textContent = "كل جزء في مكانه الصحيح!";
+          zones.querySelectorAll("button").forEach(x => x.disabled = true);
+          win(k, c);
+        } else item.textContent = ch.items[n].t;
+      } else {
+        b.classList.remove("bad"); void b.offsetWidth; b.classList.add("bad");
+        setTimeout(() => b.classList.remove("bad"), 700);
+        miss(c, ch.hint);
+      }
+    });
+    zones.append(b);
+  });
+  c.append(el(`<p class="qhelp">اضغطي على النطاق المناسب لهذا الجزء:</p>`), item, zones);
+}
+function chMulti(k, c, ch) {
+  const box = el(`<div class="opts two"></div>`), sel = new Set();
+  const check = el(`<button type="button" class="btn wide" disabled>تحقّقي من إجابتي</button>`);
+  ch.options.forEach((o, idx) => {
+    const b = el(`<button type="button" class="opt tile" aria-pressed="false">${IC[o.i]}<span>${o.t}</span></button>`);
+    b.addEventListener("click", () => {
+      b.classList.remove("bad");
+      if (sel.has(idx)) { sel.delete(idx); b.classList.remove("sel"); b.setAttribute("aria-pressed", "false"); }
+      else if (sel.size < ch.need) { sel.add(idx); b.classList.add("sel"); b.setAttribute("aria-pressed", "true"); }
+      sfx.tap(); check.disabled = sel.size !== ch.need;
+    });
+    box.append(b);
+  });
+  check.addEventListener("click", () => {
+    const btns = box.querySelectorAll(".opt");
+    const wrong = [...sel].filter(i => !ch.options[i].ok);
+    if (!wrong.length) {
+      btns.forEach((b, i) => { b.disabled = true; if (sel.has(i)) b.classList.add("ok"); });
+      check.hidden = true; win(k, c);
+    } else {
+      wrong.forEach(i => { sel.delete(i); btns[i].classList.remove("sel"); btns[i].classList.add("bad"); btns[i].setAttribute("aria-pressed", "false"); });
+      check.disabled = true; miss(c, ch.hint);
+    }
+  });
+  c.append(box, check);
+}
+
+/* ===== باب القلعة والشهادة ===== */
+function openFinale() {
+  const stars = S.mistakes <= 1 ? 3 : S.mistakes <= 4 ? 2 : 1;
+  let date = "";
+  try { date = new Date().toLocaleDateString("ar-OM", { year: "numeric", month: "long", day: "numeric" }); } catch (e) {}
+  const f = el(`<div class="finale" role="dialog" aria-modal="true" aria-labelledby="cT">
+    <div class="gate" aria-hidden="true"><div class="wallface"></div><div class="arch" style="perspective:600px"><div class="door l"></div><div class="door r"></div></div></div>
+    <div class="cert">
+      <svg class="seal" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" style="fill:var(--gold-soft);stroke:var(--gold);stroke-width:3"/><g transform="translate(14 14) scale(1.5)" style="fill:var(--gold)"><path fill-rule="evenodd" d="M7 7a5 5 0 1 0 0 10A5 5 0 1 0 7 7zm0 3a2 2 0 1 1 0 4a2 2 0 1 1 0-4z"/><path d="M11.6 10.5H22v3h-2v3h-3v-3h-5.4z"/></g></svg>
+      <div class="eyebrow">شهادة إنجاز</div>
+      <h2 id="cT">حارسة قلعة نخل</h2>
+      <p style="margin:0">تشهد قلعة نخل أن البطلة</p>
+      <div class="who" id="certName">${esc(S.name)}</div>
+      <p style="margin:0">صعدت الربوة الصخرية، وجمعت المفاتيح السبعة، وتعرّفت على تاريخ قلعة نخل.</p>
+      <div class="keys-done" aria-hidden="true">${KEY.repeat(7)}</div>
+      <div class="stars" role="img" aria-label="${AR(stars)} من ٣ نجوم">${"★".repeat(stars)}${"☆".repeat(3 - stars)}</div>
+      <small style="color:var(--muted)">${date}</small>
+    </div>
+    <div class="field"><label for="playerName">اكتبي اسمكِ ليظهر في الشهادة</label><input id="playerName" type="text" autocomplete="off" maxlength="40" placeholder="مثال: مريم"></div>
+    <button type="button" class="btn wide" data-act="share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>مشاركة اللعبة</button>
+    <div class="row"><button type="button" class="btn ghost" style="flex:1" data-act="again">العبي مرة أخرى</button><button type="button" class="btn ghost" style="flex:1" data-act="about">المصدر</button></div>
+  </div>`);
+  layer.append(f);
+  const inp = $("#playerName", f); inp.value = S.name;
+  inp.addEventListener("input", () => { S.name = inp.value; $("#certName", f).textContent = inp.value; });
+  setTimeout(() => { $(".gate", f).classList.add("open"); sfx.door(); }, 400);
+}
+
+/* ===== عن اللعبة والمصدر ===== */
+function openAbout() {
+  const b = v => v ? esc(v) : `<span class="blank"></span>`;
+  const m = el(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="aT"><div class="card">
+    <h3 id="aT">عن اللعبة</h3>
+    <p style="margin:0">لعبة رقمية تعليمية عن قلعة نخل، مشاركة في مسابقة «وهج عُمان الرقمي». كل معلومة في اللعبة موثّقة من الموسوعة العمانية للناشئة.</p>
+    <h3>مصدر المعلومات</h3>
+    <dl><dt>الكتاب</dt><dd>${SOURCE.book}</dd><dt>الجزء</dt><dd>${b(SOURCE.part)}</dd><dt>الصفحة</dt><dd>${SOURCE.page}</dd><dt>الموضوع</dt><dd>قلعة نخل</dd></dl>
+    <h3>بيانات المشاركة</h3>
+    <dl><dt>اسم الطالبة</dt><dd>${b(STUDENT.name)}</dd><dt>الصف</dt><dd>${b(STUDENT.grade)}</dd><dt>الشعبة</dt><dd>${b(STUDENT.section)}</dd></dl>
+    <h3>ماذا تتعلّمين في اللعبة؟</h3>
+    <ol class="facts-list">${STATIONS.map(s => `<li>${s.fact.replace(/<[^>]+>/g, "")}</li>`).join("")}</ol>
+    <button type="button" class="btn wide" data-act="share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>مشاركة اللعبة</button>
+    <button type="button" class="btn ghost wide" data-act="closeModal">رجوع</button>
+  </div></div>`);
+  layer.append(m);
+  $("[data-act=closeModal]", m).focus();
+}
+
+/* ===== مشاركة اللعبة ===== */
+const GAME_LINK = "https://claude.ai/artifact/3wokmTGohkShCu7kDn8qqx";
+const FILE_NAME = "nakhal-fort-game.html";
+const SHARE_TEXT = "لعبة «مفاتيح قلعة نخل»: لعبة رقمية عن قلعة نخل، ومعلوماتها من الموسوعة العمانية للناشئة.";
+const CTX = location.protocol === "file:" ? "file"
+  : (window.self !== window.top || /claude/i.test(location.hostname)) ? "claude" : "web";
+const IS_PRIVATE_BUILD = false;
+const publicRef = () => /^https:\/\/claude\.ai\/public\/artifacts\//.test(document.referrer || "") ? document.referrer : "";
+const shareURL = () => CTX === "web" ? location.href.split("#")[0] : IS_PRIVATE_BUILD ? GAME_LINK : publicRef();
+function say(slot, ok, text) { slot.innerHTML = `<div class="fb ${ok ? "ok" : "bad"}" role="status">${ok ? OKI : TRY}<span>${text}</span></div>`; }
+function openShare() {
+  const m = el(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="shT"><div class="card">
+    <h3 id="shT">مشاركة اللعبة</h3>
+    ${CTX !== "claude" ? `<p style="margin:0">أرسلي اللعبة كملف عبر واتساب أو البريد، وتُفتح في متصفح الكمبيوتر أو الجوال حتى بدون إنترنت.</p>
+      <button type="button" class="btn wide" data-act="sendFile">إرسال ملف اللعبة</button>` : ""}
+    ${CTX !== "file" && !shareURL() ? `<p style="margin:0">انسخ رابط هذه الصفحة وأرسله لأي شخص، يفتح عنده بدون حساب.</p>` : ""}
+    ${CTX !== "file" && shareURL() ? `<p style="margin:0">رابط اللعبة${IS_PRIVATE_BUILD ? "" : "، يفتح عند أي شخص بدون حساب"}:</p>
+      <div class="linkrow"><input id="shareLink" type="text" readonly dir="ltr" aria-label="رابط اللعبة" value="${esc(shareURL())}"><button type="button" class="btn" data-act="copyLink">نسخ</button></div>
+      ${CTX === "web" && navigator.share ? `<button type="button" class="btn ghost wide" data-act="shareLink">مشاركة الرابط</button>` : ""}` : ""}
+    ${IS_PRIVATE_BUILD ? `<p class="qhelp">هذا رابط Claude: يفتح لمن عنده حساب Claude بعد اختيار «Anyone with the link» من زر Share في Claude على الكمبيوتر. لإرسال اللعبة لأي شخص بدون حساب، أرسلي ملف اللعبة ${FILE_NAME}.</p>` : ""}
+    <div class="fbslot"></div>
+    <button type="button" class="btn ghost wide" data-act="closeModal">رجوع</button>
+  </div></div>`);
+  layer.append(m);
+  ($("[data-act=sendFile]", m) || $("[data-act=copyLink]", m) || $("[data-act=closeModal]", m)).focus();
+}
+/*FILEONLY-START*/
+async function sendFile(slot) {
+  const file = new File([SELF_HTML], FILE_NAME, { type: "text/html" });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: "مفاتيح قلعة نخل", text: SHARE_TEXT });
+      return say(slot, true, "تمّت المشاركة.");
+    }
+  } catch (e) { if (e && e.name === "AbortError") return; }
+  try {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(file); a.download = FILE_NAME;
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    say(slot, true, "حُفظت نسخة من اللعبة في التنزيلات، أرسليها لمن تحبين.");
+  } catch (e) { say(slot, false, "تعذّر حفظ الملف. أرسلي ملف اللعبة نفسه من جهازك."); }
+}
+/*FILEONLY-END*/
+async function copyLink(input, slot) {
+  try { await navigator.clipboard.writeText(input.value); say(slot, true, "تم نسخ الرابط."); }
+  catch (e) { input.focus(); input.select(); say(slot, false, "الرابط محدَّد، انسخيه يدويًا."); }
+}
+
+/* ===== التحكم ===== */
+function closeSheet(sh) {
+  if (!sh) return;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  sh.remove();
+  renderNodes();
+  if (!layer.children.length) {
+    const t = $("#nodes .node.now") || (S.i >= 7 && S.started ? $("#gateBtn") : null);
+    if (t) t.focus({ preventScroll: true });
+  }
+}
+const closeTop = () => { const c = layer.children; if (c.length) closeSheet(c[c.length - 1]); };
+function restart() { S.i = 0; S.mistakes = 0; layer.innerHTML = ""; renderAll(); const t = $("#nodes .node.now"); t && t.focus(); }
+
+layer.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]");
+  if (!b) { if (e.target.classList.contains("modal")) closeTop(); return; }
+  const sh = b.closest(".sheet, .finale, .modal"), act = b.dataset.act;
+  if (act === "close" || act === "closeModal") closeSheet(sh);
+  else if (act === "speak") { const s = STATIONS[+sh.dataset.k]; speak(s.title + ". " + s.fact + (s.gloss ? " " + s.gloss : "")); }
+  else if (act === "go") {
+    b.hidden = true; const c = $(".chal", sh); c.hidden = false;
+    runChallenge(+sh.dataset.k, c);
+    c.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  else if (act === "next") closeSheet(sh);
+  else if (act === "again") restart();
+  else if (act === "about") openAbout();
+  else if (act === "share") openShare();
+  else if (act === "sendFile" && typeof sendFile === "function") sendFile($(".fbslot", sh));
+  else if (act === "copyLink") copyLink($("#shareLink", sh), $(".fbslot", sh));
+  else if (act === "shareLink") navigator.share({ title: "مفاتيح قلعة نخل", text: SHARE_TEXT, url: shareURL() }).catch(() => {});
+});
+addEventListener("keydown", e => { if (e.key === "Escape") closeTop(); });
+
+$("#btnStart").addEventListener("click", () => {
+  S.started = true; sfx.ok(); $("#intro").hidden = true; renderAll();
+  const t = $("#nodes .node.now"); t && t.focus({ preventScroll: true });
+});
+$("#btnAbout").addEventListener("click", openAbout);
+$("#btnAbout2").addEventListener("click", openAbout);
+$("#btnShare").addEventListener("click", openShare);
+$("#gateBtn").addEventListener("click", () => { if (S.i >= 7) openFinale(); });
+$("#btnSound").addEventListener("click", () => {
+  soundOn = !soundOn;
+  const b = $("#btnSound");
+  b.setAttribute("aria-pressed", String(soundOn));
+  b.setAttribute("aria-label", soundOn ? "إيقاف الصوت" : "تشغيل الصوت");
+  $("#waves").toggleAttribute("hidden", !soundOn);
+  $("#mute").toggleAttribute("hidden", soundOn);
+  if (soundOn) sfx.tap(); else { try { speechSynthesis.cancel(); } catch (e) {} }
+});
+try {
+  speechSynthesis.addEventListener("voiceschanged", () => {
+    const ok = canSpeak();
+    document.querySelectorAll("[data-act=speak]").forEach(x => x.hidden = !ok);
+  });
+} catch (e) {}
+
+addMerlons();
+renderAll();
+fitScene();
+addEventListener("resize", fitScene);
+try { new ResizeObserver(fitScene).observe(stage); } catch (e) {}
+</script>
+</body>
+</html>
