@@ -320,12 +320,11 @@ h2{font-family:var(--font-display);font-weight:700;font-size:28px;line-height:1.
 
 <script>
 document.documentElement.lang = "ar"; document.documentElement.dir = "rtl";
-/* ===== بيانات المشاركة والمصدر (تُعبّأ من ولي الأمر) ===== */
-const STUDENT = { name: "", grade: "", section: "" };
-const SOURCE = { book: "الموسوعة العمانية للناشئة", part: "", page: "٣٦" };
+/* ===== مصدر المعلومات ===== */
+const SOURCE = { book: "الموسوعة العمانية للناشئة", volume: "", page: "٣٦" };
 
 const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
-const srcLine = () => `المصدر: ${SOURCE.book}${SOURCE.part ? "، الجزء " + SOURCE.part : ""}، صفحة ${SOURCE.page}`;
+const srcLine = () => `المصدر: ${SOURCE.book}${SOURCE.volume ? "، مجلد «" + SOURCE.volume + "»" : ""}، صفحة ${SOURCE.page}`;
 
 /* ===== أيقونات ===== */
 const KEY = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M7 7a5 5 0 1 0 0 10A5 5 0 1 0 7 7zm0 3a2 2 0 1 1 0 4a2 2 0 1 1 0-4z"/><path d="M11.6 10.5H22v3h-2v3h-3v-3h-5.4z"/></svg>`;
@@ -671,9 +670,7 @@ function openAbout() {
     <h3 id="aT">عن اللعبة</h3>
     <p style="margin:0">لعبة رقمية تعليمية عن قلعة نخل، مشاركة في مسابقة «وهج عُمان الرقمي». كل معلومة في اللعبة موثّقة من الموسوعة العمانية للناشئة.</p>
     <h3>مصدر المعلومات</h3>
-    <dl><dt>الكتاب</dt><dd>${SOURCE.book}</dd><dt>الجزء</dt><dd>${b(SOURCE.part)}</dd><dt>الصفحة</dt><dd>${SOURCE.page}</dd><dt>الموضوع</dt><dd>قلعة نخل</dd></dl>
-    <h3>بيانات المشاركة</h3>
-    <dl><dt>اسم الطالبة</dt><dd>${b(STUDENT.name)}</dd><dt>الصف</dt><dd>${b(STUDENT.grade)}</dd><dt>الشعبة</dt><dd>${b(STUDENT.section)}</dd></dl>
+    <dl><dt>الكتاب</dt><dd>${SOURCE.book}</dd><dt>المجلد</dt><dd>${b(SOURCE.volume)}</dd><dt>الصفحة</dt><dd>${SOURCE.page}</dd><dt>الموضوع</dt><dd>قلعة نخل</dd></dl>
     <h3>ماذا تتعلّمين في اللعبة؟</h3>
     <ol class="facts-list">${STATIONS.map(s => `<li>${s.fact.replace(/<[^>]+>/g, "")}</li>`).join("")}</ol>
     <button type="button" class="btn wide" data-act="share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>مشاركة اللعبة</button>
